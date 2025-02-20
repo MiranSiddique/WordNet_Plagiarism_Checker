@@ -212,49 +212,105 @@ def compare_sentences_and_return_image(sentence1, sentence2):
 # ---------- Dash Application (Dark Theme) ----------
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
-app.title = "Semantic Diff Checker"
+app.title = "FOXDIE - Semantic Analysis System"
+
+# Custom CSS for MGS theme
+mgs_styles = {
+    "container": {
+        "backgroundColor": "#1a1a1a",
+        "color": "#00ff00",  # Matrix-like green text
+        "padding": "20px",
+        "border": "2px solid #00ff00",
+        "fontFamily": "Share Tech Mono, monospace"
+    },
+    "header": {
+        "color": "#00ff00",
+        "textShadow": "0 0 10px #00ff00",
+        "fontFamily": "Share Tech Mono, monospace",
+        "borderBottom": "2px solid #00ff00",
+        "paddingBottom": "10px"
+    },
+    "textarea": {
+        "backgroundColor": "#2b2b2b",
+        "color": "#00ff00",
+        "border": "1px solid #00ff00",
+        "fontFamily": "Share Tech Mono, monospace"
+    },
+    "button": {
+        "backgroundColor": "#4a4a4a",
+        "color": "#00ff00",
+        "border": "1px solid #00ff00",
+        "boxShadow": "0 0 10px #00ff00",
+        "fontFamily": "Share Tech Mono, monospace"
+    }
+}
 
 app.layout = dbc.Container(
     fluid=True,
     children=[
-        html.H1("Semantic Diff Checker", className="text-center my-4"),
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.Label("Text 1"),
+        # Custom font import
+        html.Link(
+            href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap",
+            rel="stylesheet"
+        ),
+        
+        # MGS-style header
+        html.Div([
+            html.H1("FOXDIE - Semantic Analysis System", className="text-center my-4"),
+            html.H4("Kept you waiting, huh?", className="text-center mb-4",
+                   style={"color": "#00ff00", "fontStyle": "italic"}),
+        ], style=mgs_styles["header"]),
+        
+        # Loading animation
+        dcc.Loading(
+            id="loading",
+            type="default",
+            children=[
+                dbc.Row([
+                    dbc.Col([
+                        html.Label("CODEC Transmission 1", style={"color": "#00ff00"}),
                         dcc.Textarea(
                             id="sentence1-input",
-                            style={"width": "100%", "height": "200px"},
-                            placeholder="Enter first text..."
+                            style={**mgs_styles["textarea"], "width": "100%", "height": "200px"},
+                            placeholder="Enter first transmission..."
                         ),
-                    ],
-                    md=6
-                ),
-                dbc.Col(
-                    [
-                        html.Label("Text 2"),
+                    ], md=6),
+                    dbc.Col([
+                        html.Label("CODEC Transmission 2", style={"color": "#00ff00"}),
                         dcc.Textarea(
                             id="sentence2-input",
-                            style={"width": "100%", "height": "200px"},
-                            placeholder="Enter second text..."
+                            style={**mgs_styles["textarea"], "width": "100%", "height": "200px"},
+                            placeholder="Enter second transmission..."
                         ),
-                    ],
-                    md=6
-                ),
-            ],
-            className="mb-4"
+                    ], md=6),
+                ], className="mb-4"),
+            ]
         ),
-        dbc.Button("Compare", id="compare-button", color="primary", className="mb-3"),
-        html.Div(id="similarity-output", className="h4 mb-4"),
-        html.Div(
-            id="graph-output",
-            style={"textAlign": "center"}
-        )
+        
+        # Action button with MGS styling
+        dbc.Button(
+            "ANALYZE TRANSMISSIONS",
+            id="compare-button",
+            className="mb-3",
+            style=mgs_styles["button"]
+        ),
+        
+        # Results section
+        html.Div([
+            html.Div(id="similarity-output", className="h4 mb-4"),
+            html.Div(id="graph-output", style={"textAlign": "center"})
+        ], style={"border": "1px solid #00ff00", "padding": "20px", "marginTop": "20px"}),
+        
+        # Footer with MGS reference
+        html.Footer([
+            html.P("Snake? Snake?! SNAAAAKE!", 
+                   style={"color": "#00ff00", "textAlign": "center", "marginTop": "20px"})
+        ])
     ],
-    style={"backgroundColor": "#2b2b2b", "color": "white", "padding": "20px"}
+    style=mgs_styles["container"]
 )
 
+# Update the callback to include MGS-style formatting
 @app.callback(
     [Output("similarity-output", "children"),
      Output("graph-output", "children")],
@@ -266,16 +322,24 @@ def compare_texts(n_clicks, sentence1, sentence2):
         return "", ""
 
     if not sentence1 or not sentence2:
-        return "Please enter text in both fields.", ""
+        return "! TRANSMISSION ERROR ! - Both CODEC frequencies required.", ""
 
     similarity_score, encoded_image = compare_sentences_and_return_image(sentence1, sentence2)
 
-    similarity_text = f"Similarity Score: {similarity_score:.2f}%"
+    similarity_text = [
+        html.Span("CODEC Analysis Complete - Similarity Rating: ", style={"color": "#00ff00"}),
+        html.Span(f"{similarity_score:.2f}%", 
+                 style={"color": "#00ff00", "textShadow": "0 0 10px #00ff00"})
+    ]
 
-    # Create an <img> tag with the base64-encoded PNG
     image_element = html.Img(
         src=f"data:image/png;base64,{encoded_image}",
-        style={"maxWidth": "100%", "border": "2px solid white", "marginTop": "20px"}
+        style={
+            "maxWidth": "100%",
+            "border": "2px solid #00ff00",
+            "marginTop": "20px",
+            "boxShadow": "0 0 20px #00ff00"
+        }
     )
 
     return similarity_text, image_element
