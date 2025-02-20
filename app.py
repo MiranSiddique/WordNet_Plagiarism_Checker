@@ -1,5 +1,6 @@
 import base64
 import io
+import os
 
 import dash
 import dash_bootstrap_components as dbc
@@ -280,4 +281,4 @@ def compare_texts(n_clicks, sentence1, sentence2):
     return similarity_text, image_element
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
